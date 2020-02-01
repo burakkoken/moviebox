@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: moviebox-discovery
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+  instance:
+    prefer-ip-address: true
