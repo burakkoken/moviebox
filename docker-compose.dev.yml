@@ -1,12 +1,16 @@
 version: "3.7"
 
 services:
+  moviebox-discovery-service:
+    image: moviebox-discovery
+    container_name: moviebox-discovery-container
+    ports:
+      - ${MOVIEBOX_DISCOVERY_HOST_PORT}:${MOVIEBOX_DISCOVERY_CONTAINER_PORT}
+    networks:
+      moviebox-service-network:
+    restart: on-failure
   movie-service:
-    #build:
-    #  context: .
-    #  dockerfile: ./Dockerfile
     image: movie-service
-    container_name: movie-service-container
     networks:
       moviebox-service-network:
     ports:
@@ -15,21 +19,27 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-database:${POSTGRES_HOST_PORT}/${POSTGRES_DB}?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - EUREKA_SERVER_URI=http://moviebox-discovery-service:${MOVIEBOX_DISCOVERY_HOST_PORT}/eureka
     depends_on:
+      - moviebox-discovery-service
       - postgres-database
+    restart: on-failure
   postgres-database:
     image: postgres:alpine
     container_name: postgres-database-container
     networks:
-      moviebox-service-network:
+       moviebox-service-network:
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+       - postgres-data:/var/lib/postgresql/data
     ports:
       - ${POSTGRES_HOST_PORT}:${POSTGRES_CONTAINER_PORT}
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+    depends_on:
+      - moviebox-discovery-service
+    restart: on-failure
   postgres-admin-panel:
     image: dpage/pgadmin4
     container_name: postgres-admin-panel-container
@@ -44,6 +54,7 @@ services:
       - pgadmin-data:/root/.pgadmin
     depends_on:
       - postgres-database
+    restart: on-failure
 
 volumes:
   postgres-data:

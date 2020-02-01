@@ -17,9 +17,6 @@ RUN mvn package -DskipTests
 # Build Image
 FROM openjdk:14-jdk-alpine3.10
 
-# Expose on port 8080
-EXPOSE 8080
-
 # Maintainer
 MAINTAINER "Burak Koken"
 
