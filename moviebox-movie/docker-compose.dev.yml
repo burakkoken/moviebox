@@ -5,7 +5,7 @@ services:
     #build:
     #  context: .
     #  dockerfile: ./Dockerfile
-    image: movie-service:1.0.0
+    image: movie-service
     container_name: movie-service-container
     networks:
       movie-service-network:
