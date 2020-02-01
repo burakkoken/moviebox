@@ -2,9 +2,9 @@ spring:
   application:
     name: moviebox-movie-service
   datasource:
-    url: jdbc:postgresql://postgres-database:5432/movie_db?useSSL=false
-    username: admin
-    password: admin
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

@@ -5,33 +5,37 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: movie-service
+    container_name: movie-service-container
     networks:
-      movie_service_network:
+      movie-service-network:
     ports:
-      - "8080:8080"
+      - ${MOVIE_SERVICE_HOST_PORT}:${MOVIE_SERVICE_CONTAINER_PORT}
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-database:${POSTGRES_HOST_PORT}/${POSTGRES_DB}?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - postgres-database
   postgres-database:
     image: postgres:alpine
-    container_name: postgres-database
+    container_name: postgres-database-container
     networks:
-      movie_service_network:
+      movie-service-network:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - ${POSTGRES_HOST_PORT}:${POSTGRES_CONTAINER_PORT}
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
   postgres-admin-panel:
     image: dpage/pgadmin4
-    container_name: postgres-admin-panel
+    container_name: postgres-admin-panel-container
     networks:
-      movie_service_network:
+      movie-service-network:
     ports:
-      - "5050:80"
+      - ${POSTGRES_ADMIN_HOST_PORT}:${POSTGRES_ADMIN_CONTAINER_PORT}
     environment:
       - PGADMIN_DEFAULT_EMAIL=${POSTGRES_ADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${POSTGRES_ADMIN_DEFAULT_PASSWORD}
@@ -43,5 +47,5 @@ volumes:
   pgadmin-data:
 
 networks:
-  movie_service_network:
+  movie-service-network:
     driver: bridge
