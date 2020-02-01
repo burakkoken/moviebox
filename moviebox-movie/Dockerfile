@@ -1,5 +1,6 @@
 # Build Jar
 FROM maven:3-jdk-8 AS builder
+
 # Create a directory named build for sources
 RUN mkdir -p /build
 # Change working directory
@@ -11,7 +12,7 @@ RUN mvn -B dependency:resolve dependency:resolve-plugins
 # Copy source code
 COPY src /build/src
 # Build application
-RUN mvn package
+RUN mvn package -DskipTests
 
 # Build Image
 FROM openjdk:14-jdk-alpine3.10
