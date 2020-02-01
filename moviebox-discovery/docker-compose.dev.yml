@@ -1,0 +1,8 @@
+version: "3.7"
+
+services:
+  movie-discovery:
+    image: movie-discovery
+    container_name: movie-discovery-container
+    ports:
+      - ${MOVIE_DISCOVERY_HOST_PORT}:${MOVIE_DISCOVERY_CONTAINER_PORT}
