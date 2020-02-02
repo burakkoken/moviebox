@@ -1,5 +1,5 @@
 # Build Jar
-FROM maven:3-jdk-8 AS builder
+FROM maven:3.6-jdk-13 AS builder
 
 # Create a directory named build for sources
 RUN mkdir -p /build
@@ -15,31 +15,19 @@ COPY src /build/src
 RUN mvn package -DskipTests
 
 # Build Image
-FROM openjdk:14-jdk-alpine3.10
-
-# Expose on port 8080
-EXPOSE 8080
+FROM adoptopenjdk/openjdk13-openj9
 
 # Maintainer
 MAINTAINER "Burak Koken"
 
-# Set App home folder
-ENV APP_HOME /app
 # Possibility to set JVM options
-ENV JAVA_OPTS=""
-
-# Create a app directory
-RUN mkdir $APP_HOME
-# Create folder to save configuration files
-RUN mkdir $APP_HOME/config
-# Create folder with application logs
-RUN mkdir $APP_HOME/log
-
-VOLUME $APP_HOME/log
-VOLUME $APP_HOME/config
+#ENV JAVA_OPTS="-Xshareclasses:cacheDir=/cache"
 
 # Copy executable jar file from the builder
-COPY --from=builder /build/target/*.jar moviebox-movie.jar
+#COPY --from=builder /build/target/*.jar moviebox-movie.jar
+
+COPY --from=builder /build/target/*.jar /app/moviebox-movie.jar
 
 # Run
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom","-jar","/moviebox-movie.jar"]
+ENTRYPOINT ["java", "-Xscmx80M", "-Xshareclasses:cacheDir=/cache", "-Xquickstart", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/moviebox-movie.jar"]
+#RUN /bin/bash -c 'java -Xscmx80M -Xshareclasses:cacheDir=/cache -Xquickstart -jar /app/moviebox-movie.jar';

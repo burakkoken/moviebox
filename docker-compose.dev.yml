@@ -7,12 +7,12 @@ services:
     ports:
       - ${MOVIEBOX_DISCOVERY_HOST_PORT}:${MOVIEBOX_DISCOVERY_CONTAINER_PORT}
     networks:
-      moviebox-service-network:
+      moviebox-network:
     restart: on-failure
   movie-service:
     image: movie-service
     networks:
-      moviebox-service-network:
+      moviebox-network:
     ports:
       - ${MOVIE_SERVICE_HOST_PORT}:${MOVIE_SERVICE_CONTAINER_PORT}
     environment:
@@ -20,6 +20,10 @@ services:
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - EUREKA_SERVER_URI=http://moviebox-discovery-service:${MOVIEBOX_DISCOVERY_HOST_PORT}/eureka
+    volumes:
+      - type: volume
+        source: movie-service-cache
+        target: /cache
     depends_on:
       - moviebox-discovery-service
       - postgres-database
@@ -28,7 +32,7 @@ services:
     image: postgres:alpine
     container_name: postgres-database-container
     networks:
-       moviebox-service-network:
+      moviebox-network:
     volumes:
        - postgres-data:/var/lib/postgresql/data
     ports:
@@ -44,22 +48,24 @@ services:
     image: dpage/pgadmin4
     container_name: postgres-admin-panel-container
     networks:
-      moviebox-service-network:
+      moviebox-network:
     ports:
       - ${POSTGRES_ADMIN_HOST_PORT}:${POSTGRES_ADMIN_CONTAINER_PORT}
     environment:
       - PGADMIN_DEFAULT_EMAIL=${POSTGRES_ADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${POSTGRES_ADMIN_DEFAULT_PASSWORD}
     volumes:
-      - pgadmin-data:/root/.pgadmin
-    depends_on:
-      - postgres-database
+      - pgadmin-data:/var/lib/pgadmin
     restart: on-failure
 
 volumes:
   postgres-data:
+    external: true
   pgadmin-data:
+    external: true
+  movie-service-cache:
+    external: true
 
 networks:
-  moviebox-service-network:
-    driver: bridge
+  moviebox-network:
+    external: true
