@@ -37,6 +37,6 @@ COPY --from=builder /build/${DEPENDENCY}/BOOT-INF/classes     /app
 #COPY --from=builder /build/target/*.jar /app/moviebox-movie.jar
 
 # Run
-ENTRYPOINT ["java","-Xscmx80M","-Xshareclasses:cacheDir=/cache","-Xquickstart","-Djava.security.egd=file:/dev/./urandom","-cp", "app:app/lib/*","org.codnect.moviebox.MovieboxApplication"]
+ENTRYPOINT ["java","-Xscmx300M","-Xshareclasses:cacheDir=/cache","-Xquickstart","-Djava.security.egd=file:/dev/./urandom","-cp", "app:app/lib/*","org.codnect.moviebox.MovieboxApplication"]
 #ENTRYPOINT ["java", "-Xscmx80M", "-Xshareclasses:cacheDir=/cache", "-Xquickstart", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/moviebox-movie.jar"]
 #RUN /bin/bash -c 'java -Xscmx80M -Xshareclasses:cacheDir=/cache -Xquickstart -jar /app/moviebox-movie.jar';
