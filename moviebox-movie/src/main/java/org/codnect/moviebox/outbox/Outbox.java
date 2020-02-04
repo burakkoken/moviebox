@@ -25,7 +25,6 @@ public class Outbox {
     private OutboxStatus status;
 
     @Column
-    @Temporal(TemporalType.TIMESTAMP)
     private Long timestamp;
 
     public Outbox() {
