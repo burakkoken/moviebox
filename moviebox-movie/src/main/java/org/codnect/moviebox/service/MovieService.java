@@ -39,7 +39,7 @@ public class MovieService {
 
     public Movie createMovie(Movie movie) {
         Movie newMovie = movieRepository.save(movie);
-        movieEventPublisher.publish(new MovieCreatedEvent(movie.getId(), newMovie));
+        movieEventPublisher.publish(new MovieCreatedEvent(newMovie.getId(), newMovie));
         return newMovie;
     }
 
