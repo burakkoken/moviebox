@@ -29,31 +29,31 @@ public class MovieController {
             @PageableDefault(
                     page = 0, size = 20, sort = {"title"}, direction = Sort.Direction.ASC
             ) Pageable pageable) {
-        return null;
+        return movieService.findAllMovies(pageable);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public MovieDTO findMovie(@PathVariable("id") Long movieId) {
-        return null;
+        return movieService.findMovie(movieId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MovieDTO createMovie(@Valid @RequestBody MovieDTO movieDTO) {
-        return null;
+        return movieService.createMovie(movieDTO);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public MovieDTO updateMovie(@PathVariable("id") Long movieId, @Valid @RequestBody MovieDTO movieDTO) {
-        return null;
+        return movieService.updateMovie(movieId, movieDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteMovie(@PathVariable("id") Long movieId) {
-
+        movieService.deleteMovie(movieId);
     }
 
 }

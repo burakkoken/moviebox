@@ -20,34 +20,35 @@ public class GenreController {
         this.genreService = genreService;
     }
 
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<GenreDTO> findAllGenres() {
-        return null;
+        return genreService.findAll();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GenreDTO findGenre(@PathVariable("id") Long genreId) {
-        return null;
+        return genreService.findGenre(genreId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GenreDTO createGenre(@Valid @RequestBody GenreDTO genreDTO) {
-        return null;
+        return genreService.createGenre(genreDTO);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GenreDTO updateGenre(@PathVariable("id") Long genreId, @Valid @RequestBody GenreDTO genreDTO) {
-        return null;
+        return genreService.updateGenre(genreId, genreDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteGenre(@PathVariable("id") Long genreId) {
-
+        genreService.deleteGenre(genreId);
     }
 
 }
