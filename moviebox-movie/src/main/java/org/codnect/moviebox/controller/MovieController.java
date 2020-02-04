@@ -1,6 +1,8 @@
 package org.codnect.moviebox.controller;
 
 import org.codnect.moviebox.dto.MovieDTO;
+import org.codnect.moviebox.mapper.MovieMapper;
+import org.codnect.moviebox.model.Movie;
 import org.codnect.moviebox.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +19,12 @@ import java.util.List;
 public class MovieController {
 
     private MovieService movieService;
+    private MovieMapper movieMapper;
 
     @Autowired
-    public MovieController(MovieService movieService) {
+    public MovieController(MovieService movieService, MovieMapper movieMapper) {
         this.movieService = movieService;
+        this.movieMapper = movieMapper;
     }
 
     @GetMapping
@@ -29,25 +33,29 @@ public class MovieController {
             @PageableDefault(
                     page = 0, size = 20, sort = {"title"}, direction = Sort.Direction.ASC
             ) Pageable pageable) {
-        return movieService.findAllMovies(pageable);
+        return movieMapper.toMovieDTOList(movieService.findAllMovies(pageable));
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public MovieDTO findMovie(@PathVariable("id") Long movieId) {
-        return movieService.findMovie(movieId);
+        return movieMapper.toMovieDTO(movieService.findMovie(movieId));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MovieDTO createMovie(@Valid @RequestBody MovieDTO movieDTO) {
-        return movieService.createMovie(movieDTO);
+        Movie movie = movieMapper.toMovie(movieDTO);
+        movieDTO.setId(movie.getId());
+        return movieMapper.toMovieDTO(movieService.createMovie(movie));
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public MovieDTO updateMovie(@PathVariable("id") Long movieId, @Valid @RequestBody MovieDTO movieDTO) {
-        return movieService.updateMovie(movieId, movieDTO);
+        Movie updatedMovie = movieMapper.toMovie(movieDTO);
+        updatedMovie.setId(movieId);
+        return movieMapper.toMovieDTO(movieService.updateMovie(movieId, updatedMovie));
     }
 
     @DeleteMapping("/{id}")

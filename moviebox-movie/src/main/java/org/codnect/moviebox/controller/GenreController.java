@@ -1,6 +1,8 @@
 package org.codnect.moviebox.controller;
 
 import org.codnect.moviebox.dto.GenreDTO;
+import org.codnect.moviebox.mapper.GenreMapper;
+import org.codnect.moviebox.model.Genre;
 import org.codnect.moviebox.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,35 +16,40 @@ import java.util.List;
 public class GenreController {
 
     private GenreService genreService;
+    private GenreMapper genreMapper;
 
     @Autowired
-    public GenreController(GenreService genreService) {
+    public GenreController(GenreService genreService, GenreMapper genreMapper) {
         this.genreService = genreService;
+        this.genreMapper = genreMapper;
     }
 
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<GenreDTO> findAllGenres() {
-        return genreService.findAll();
+        return genreMapper.toGenreDTOList(genreService.findAll());
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GenreDTO findGenre(@PathVariable("id") Long genreId) {
-        return genreService.findGenre(genreId);
+        return genreMapper.toGenreDTO(genreService.findGenre(genreId));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GenreDTO createGenre(@Valid @RequestBody GenreDTO genreDTO) {
-        return genreService.createGenre(genreDTO);
+        Genre newGenre = genreMapper.toGenre(genreDTO);
+        return genreMapper.toGenreDTO(genreService.createGenre(newGenre));
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GenreDTO updateGenre(@PathVariable("id") Long genreId, @Valid @RequestBody GenreDTO genreDTO) {
-        return genreService.updateGenre(genreId, genreDTO);
+        Genre updatedGenre = genreMapper.toGenre(genreDTO);
+        updatedGenre.setId(genreId);
+        return genreMapper.toGenreDTO(genreService.updateGenre(genreId, updatedGenre));
     }
 
     @DeleteMapping("/{id}")

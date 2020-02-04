@@ -17,43 +17,36 @@ import java.util.Optional;
 public class GenreService {
 
     private GenreRepository genreRepository;
-    private GenreMapper genreMapper;
 
-    public GenreService(GenreRepository genreRepository, GenreMapper genreMapper) {
+    public GenreService(GenreRepository genreRepository) {
         this.genreRepository = genreRepository;
-        this.genreMapper = genreMapper;
     }
 
-    public List<GenreDTO> findAll() {
-        return genreMapper.toGenreDTOList(genreRepository.findAll());
+    public List<Genre> findAll() {
+        return genreRepository.findAll();
     }
 
-    public GenreDTO findGenre(Long genreId) {
+    public Genre findGenre(Long genreId) {
         Optional<Genre> optionalGenre = genreRepository.findById(genreId);
-        return genreMapper.toGenreDTO(
-                optionalGenre.orElseThrow(() -> new GenreNotFoundException(genreId))
-        );
+        return optionalGenre.orElseThrow(() -> new GenreNotFoundException(genreId));
     }
 
-    public GenreDTO createGenre(GenreDTO genreDTO) {
-        Optional<Genre> optionalGenre = genreRepository.findByName(genreDTO.getName());
+    public Genre createGenre(Genre genre) {
+        Optional<Genre> optionalGenre = genreRepository.findByName(genre.getName());
         if(optionalGenre.isPresent()) {
-            throw new GenreDuplicateException(genreDTO.getName());
+            throw new GenreDuplicateException(genre.getName());
         }
-        Genre newGenre = genreMapper.toGenre(genreDTO);
-        return genreMapper.toGenreDTO(genreRepository.save(newGenre));
+        return genreRepository.save(genre);
     }
 
-    public GenreDTO updateGenre(Long genreId, GenreDTO genreDTO) {
+    public Genre updateGenre(Long genreId, Genre genre) {
         Optional<Genre> optionalGenre = genreRepository.findById(genreId);
         optionalGenre.orElseThrow(() -> new GenreNotFoundException(genreId));
-        optionalGenre = genreRepository.findByName(genreDTO.getName());
+        optionalGenre = genreRepository.findByName(genre.getName());
         if(optionalGenre.isPresent()) {
-            throw new GenreDuplicateException(genreDTO.getName());
+            throw new GenreDuplicateException(genre.getName());
         }
-        Genre updatedGenre = genreMapper.toGenre(genreDTO);
-        updatedGenre.setId(genreId);
-        return genreMapper.toGenreDTO(genreRepository.save(updatedGenre));
+        return genreRepository.save(genre);
     }
 
     public void deleteGenre(Long genreId) {

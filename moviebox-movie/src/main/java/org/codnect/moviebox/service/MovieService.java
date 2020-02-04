@@ -20,40 +20,33 @@ import java.util.Optional;
 public class MovieService {
 
     private MovieRepository movieRepository;
-    private MovieMapper movieMapper;
     private MovieEventPublisher movieEventPublisher;
 
     @Autowired
-    public MovieService(MovieRepository movieRepository, MovieMapper movieMapper, MovieEventPublisher movieEventPublisher) {
+    public MovieService(MovieRepository movieRepository, MovieEventPublisher movieEventPublisher) {
         this.movieRepository = movieRepository;
-        this.movieMapper = movieMapper;
         this.movieEventPublisher = movieEventPublisher;
     }
 
-    public List<MovieDTO> findAllMovies(Pageable pageable) {
-        return movieMapper.toMovieDTOList(movieRepository.findAllMovies(pageable));
+    public List<Movie> findAllMovies(Pageable pageable) {
+        return movieRepository.findAllMovies(pageable);
     }
 
-    public MovieDTO findMovie(Long movieId) {
+    public Movie findMovie(Long movieId) {
         Optional<Movie> optionalMovie = movieRepository.findById(movieId);
-        return movieMapper.toMovieDTO(
-                optionalMovie.orElseThrow(() -> new MovieNotFoundException(movieId))
-        );
+        return optionalMovie.orElseThrow(() -> new MovieNotFoundException(movieId));
     }
 
-    public MovieDTO createMovie(MovieDTO movieDTO) {
-        Movie movie = movieMapper.toMovie(movieDTO);
-        movieDTO.setId(movie.getId());
-        movieEventPublisher.publish(new MovieCreatedEvent(movie.getId(), movieDTO));
-        return movieDTO;
+    public Movie createMovie(Movie movie) {
+        Movie newMovie = movieRepository.save(movie);
+        movieEventPublisher.publish(new MovieCreatedEvent(movie.getId(), newMovie));
+        return newMovie;
     }
 
-    public MovieDTO updateMovie(Long movieId, MovieDTO movieDTO) {
+    public Movie updateMovie(Long movieId, Movie movie) {
         Optional<Movie> optionalMovie = movieRepository.findById(movieId);
         optionalMovie.orElseThrow(() -> new MovieNotFoundException(movieId));
-        Movie updatedMovie = movieMapper.toMovie(movieDTO);
-        updatedMovie.setId(movieId);
-        return movieMapper.toMovieDTO(movieRepository.save(movieRepository.save(updatedMovie)));
+        return movieRepository.save(movie);
     }
 
     public void deleteMovie(Long movieId) {
