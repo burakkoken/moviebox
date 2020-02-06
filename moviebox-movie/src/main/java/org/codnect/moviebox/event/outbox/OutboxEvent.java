@@ -1,24 +1,22 @@
 package org.codnect.moviebox.event.outbox;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.context.ApplicationEvent;
 
 public abstract class OutboxEvent extends ApplicationEvent {
 
-    private Long aggregateId;
-    private String topic;
-
-    public OutboxEvent(Long aggregateId, String topic, Object source) {
+    public OutboxEvent(JsonNode source) {
         super(source);
-        this.aggregateId = aggregateId;
-        this.topic = topic;
     }
 
-    public Long getAggregateId() {
-        return aggregateId;
-    }
+    public abstract String getAggregateId();
 
-    public String getTopicName() {
-        return topic;
+    public abstract String getAggregateType();
+
+    public abstract String getType();
+
+    public JsonNode getPayload() {
+        return (JsonNode) getSource();
     }
 
 }

@@ -1,5 +1,7 @@
 package org.codnect.moviebox.outbox;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -11,10 +13,13 @@ public class Outbox {
     private UUID uuid;
 
     @Column
-    private Long aggregateId;
+    private String aggregateId;
 
     @Column
-    private String topic;
+    private String aggregateType;
+
+    @Column
+    private String type;
 
     @Lob
     @Column(length = 1048576)
@@ -39,20 +44,28 @@ public class Outbox {
         this.uuid = uuid;
     }
 
-    public Long getAggregateId() {
+    public String getAggregateId() {
         return aggregateId;
     }
 
-    public void setAggregateId(Long aggregateId) {
+    public void setAggregateId(String aggregateId) {
         this.aggregateId = aggregateId;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getAggregateType() {
+        return aggregateType;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setAggregateType(String aggregateType) {
+        this.aggregateType = aggregateType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getPayload() {

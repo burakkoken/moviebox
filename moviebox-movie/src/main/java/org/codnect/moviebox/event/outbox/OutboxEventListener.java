@@ -24,8 +24,9 @@ public class OutboxEventListener implements ApplicationListener<OutboxEvent> {
         Outbox outbox = new Outbox();
         outbox.setUuid( UUID.randomUUID());
         outbox.setAggregateId(outbox.getAggregateId());
-        outbox.setTopic(outboxEvent.getTopicName());
-        outbox.setPayload(outbox.getPayload());
+        outbox.setAggregateType(outbox.getAggregateType());
+        outbox.setType(outboxEvent.getType());
+        outbox.setPayload(outboxEvent.getSource() != null ? outboxEvent.getPayload().textValue() : null);
         outbox.setStatus(OutboxStatus.UNPUBLISHED);
         outbox.setTimestamp(outboxEvent.getTimestamp());
         outboxRepository.save(outbox);

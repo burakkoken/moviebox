@@ -22,3 +22,9 @@ eureka:
       defaultZone: ${EUREKA_SERVER_URI}
   instance:
     preferIpAddress: true
+
+redis:
+  cache:
+    expirations:
+      movie: 7200
+      movies: 7200
