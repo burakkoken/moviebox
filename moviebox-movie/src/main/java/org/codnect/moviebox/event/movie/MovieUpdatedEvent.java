@@ -4,15 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.codnect.moviebox.model.Movie;
 
-public class MovieCreatedEvent extends MovieEvent {
+public class MovieUpdatedEvent extends MovieEvent {
 
     private static ObjectMapper MAPPER = new ObjectMapper();
 
-    private MovieCreatedEvent(Long movieId, JsonNode jsonNode) {
+    public MovieUpdatedEvent(Long movieId, JsonNode jsonNode) {
         super(movieId, jsonNode);
     }
 
-    public static MovieCreatedEvent of(Long movieId, Movie movie) {
+    public static MovieUpdatedEvent of(Long movieId, Movie movie) {
         JsonNode jsonNode = MAPPER.createObjectNode()
                 .put("id", movie.getId())
                 .put("title", movie.getTitle())
@@ -20,12 +20,12 @@ public class MovieCreatedEvent extends MovieEvent {
                 .put("overview", movie.getOverview())
                 .put("imdb", movie.getImdb())
                 .put("releaseDate", movie.getReleaseDate().getTime());
-        return new MovieCreatedEvent(movieId, jsonNode);
+        return new MovieUpdatedEvent(movieId, jsonNode);
     }
 
     @Override
     public String getType() {
-        return "MovieCreatedEvent";
+        return "MovieUpdatedEvent";
     }
 
 }

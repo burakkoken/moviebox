@@ -2,7 +2,9 @@ package org.codnect.moviebox.service;
 
 import org.codnect.moviebox.dto.MovieDTO;
 import org.codnect.moviebox.event.movie.MovieCreatedEvent;
+import org.codnect.moviebox.event.movie.MovieDeletedEvent;
 import org.codnect.moviebox.event.movie.MovieEventPublisher;
+import org.codnect.moviebox.event.movie.MovieUpdatedEvent;
 import org.codnect.moviebox.exception.MovieNotFoundException;
 import org.codnect.moviebox.mapper.MovieMapper;
 import org.codnect.moviebox.model.Movie;
@@ -61,7 +63,9 @@ public class MovieService {
     public Movie updateMovie(Long movieId, Movie movie) {
         Optional<Movie> optionalMovie = movieRepository.findById(movieId);
         optionalMovie.orElseThrow(() -> new MovieNotFoundException(movieId));
-        return movieRepository.save(movie);
+        Movie updatedMovie = movieRepository.save(movie);
+        movieEventPublisher.publish(MovieUpdatedEvent.of(movieId, updatedMovie));
+        return updatedMovie;
     }
 
     @Caching(
@@ -74,6 +78,7 @@ public class MovieService {
         Optional<Movie> optionalMovie = movieRepository.findById(movieId);
         Movie movie = optionalMovie.orElseThrow(() -> new MovieNotFoundException(movieId));
         movieRepository.delete(movie);
+        movieEventPublisher.publish(MovieDeletedEvent.of(movieId));
     }
 
 }
